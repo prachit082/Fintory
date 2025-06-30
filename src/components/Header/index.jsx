@@ -23,7 +23,7 @@ function Header() {
 
   return (
     <div className="navbar">
-      <p className="navbar-heading">Financly.</p>
+      <p className="navbar-heading">Fintory.</p>
       {user ? (
         <p className="navbar-link" onClick={logout}>
           <span style={{ marginRight: "1rem" }}>

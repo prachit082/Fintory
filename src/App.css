@@ -1,25 +1,41 @@
+:root {
+  --theme: #0d6efd; /* Change this to your app's primary theme color */
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .blue-text {
   color: var(--theme);
 }
+
 .wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100vw;
   height: 90vh;
+  background-color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
+
 .signup-signin-container {
   width: 30vw;
   min-width: 400px;
   box-shadow: 0px 0px 30px 8px rgba(227, 227, 227, 0.75);
   border-radius: 1rem;
   padding: 2rem;
+  background-color: #fff;
 }
 
 .input-wrapper {
   margin: 1rem 0rem;
   width: 100%;
 }
+
 .input-wrapper p {
   margin-bottom: 0px;
   color: #000;
@@ -32,6 +48,7 @@
   padding: 0.5rem 0rem;
   width: 100%;
   border-radius: 0;
+  background-color: transparent;
 }
 
 .custom-input {
@@ -47,7 +64,8 @@
 .custom-input:focus {
   outline: none;
   opacity: 1;
-  transition: all 0.3s;
+  transition: border-bottom-color 0.3s ease, opacity 0.3s ease;
+  border-bottom: 1px solid var(--theme);
 }
 
 .btn {
@@ -64,12 +82,12 @@
   align-items: center;
   justify-content: center;
   height: auto !important;
+  transition: all 0.3s;
 }
 
 .btn:hover {
   background-color: var(--theme);
   color: #fff;
-  transition: all 0.3s;
 }
 
 .btn-blue {
@@ -80,7 +98,6 @@
 .btn-blue:hover {
   background-color: #fff !important;
   color: var(--theme) !important;
-  transition: all 0.3s;
 }
 
 .input-flex {
@@ -98,6 +115,7 @@
   width: 100%;
   padding: 0.5rem;
   border: 0;
+  background-color: transparent;
 }
 
 .input-flex input:focus {
@@ -106,7 +124,7 @@
 
 .select-input {
   width: 30%;
-  margin-right: 10;
+  margin-right: 10px;
   display: flex;
   align-items: center;
   box-shadow: 0px 0px 30px 8px rgba(227, 227, 227, 0.75);
@@ -130,8 +148,25 @@
   border-radius: 0.5rem !important;
   padding: 2rem;
   margin-bottom: 4rem;
+  background-color: #fff;
 }
 
 .dashboard-container {
   padding-bottom: 1rem;
+}
+
+/* Responsive Enhancements */
+@media (max-width: 600px) {
+  .signup-signin-container {
+    width: 90vw;
+    padding: 1.5rem;
+  }
+
+  .select-input {
+    width: 100%;
+  }
+
+  .my-table {
+    padding: 1rem;
+  }
 }
