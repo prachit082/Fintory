@@ -1,12 +1,88 @@
-# React + Vite
+# 📊 FINTORY
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**FINTORY** is a sleek and intuitive **personal finance tracker** built using **React 19**, **Vite**, **Firebase**, and **Ant Design**. It helps users manage expenses, track incomes, and maintain control over their financial life effortlessly.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- 🔐 **User Authentication**
+  - Sign up / Log in using Email or Google
+  - Firebase Authentication integration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- 📈 **Dashboard**
+  - Visual overview of financial health
+  - Real-time updates
+
+- 💸 **Expense & Income Tracking**
+  - Add, edit, and delete transactions
+  - Filter and categorize entries
+
+- 💾 **Cloud Data Storage**
+  - All data securely stored with Firebase Firestore
+
+- 🎨 **Clean UI**
+  - Built with Ant Design & custom CSS for a smooth experience
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: [React 19](https://react.dev/), [Vite](https://vitejs.dev/)
+- **UI**: [Ant Design](https://ant.design/), Custom SCSS/CSS
+- **Authentication & Database**: [Firebase](https://firebase.google.com/)
+- **State Management**: React Hooks
+- **Routing**: React Router
+
+---
+
+## ⚙️ Installation
+
+Follow these steps to set up the project locally on your machine.
+
+**Prerequisites**
+
+Make sure you have the following installed on your machine:
+
+- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/en)
+- [npm](https://www.npmjs.com/) (Node Package Manager)
+
+**Cloning the Repository**
+
+```bash
+git clone https://github.com/prachit082/Fintory.git
+cd Fintory
+```
+
+**Installation**
+
+Install the project dependencies using npm:
+
+```bash
+npm install
+```
+
+**Set Up Environment Variables**
+
+Create a new file named `.env` in the root of your project and add the following content:
+
+```env
+VITE_API_KEY=
+VITE_AUTH_DOMAIN=
+VITE_PROJECT_ID=
+VITE_STORAGE_BUCKET=
+VITE_MESSAGING_SENDER_ID=
+VITE_APP_ID=
+VITE_MEASUREMENT_ID=
+```
+
+Replace the placeholder values with your actual Firebase credentials. You can obtain these credentials by signing up on the [Firebase website](https://firebase.google.com/).
+
+**Running the Project**
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser to view the project.
