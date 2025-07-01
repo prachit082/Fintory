@@ -9,6 +9,7 @@ import {
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import Header from "../components/Header";
 import { toast } from "react-toastify";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 const SignUpSignIn = () => {
   const [name, setName] = useState("");
@@ -17,6 +18,9 @@ const SignUpSignIn = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [flag, setFlag] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const createUserDocument = async (user) => {
@@ -47,10 +51,33 @@ const SignUpSignIn = () => {
     }
   };
 
+  const validateEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+  const validateSignup = () => {
+    const newErrors = {};
+    if (!name.trim()) newErrors.name = "Full Name is required";
+    if (!email.trim()) newErrors.email = "Email is required";
+    else if (!validateEmail(email)) newErrors.email = "Invalid email format";
+
+    if (!password) newErrors.password = "Password is required";
+    else if (password.length < 6)
+      newErrors.password = "Password must be at least 6 characters";
+
+    if (!confirmPassword) newErrors.confirmPassword = "Confirm your password";
+    else if (password !== confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const signUpWithEmail = async (e) => {
-    setLoading(true);
     e.preventDefault();
+    if (!validateSignup()) return;
+    
     try {
+      setLoading(true);
       const result = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -72,11 +99,25 @@ const SignUpSignIn = () => {
   };
 
   const signInWithEmail = async (e) => {
-    setLoading(true);
+    
     e.preventDefault();
+
+    if (!email || !password) {
+      setErrors({
+        email: !email ? "Email is required" : "",
+        password: !password ? "Password is required" : "",
+      });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setErrors({ email: "Invalid email format" });
+      return;
+    }
+
+    setLoading(true);
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
-      const user = result.user;
       navigate("/dashboard");
       toast.success("Logged In Successfully!");
       setLoading(false);
@@ -110,66 +151,12 @@ const SignUpSignIn = () => {
     <>
       <Header />
       <div className="wrapper">
-        {flag ? (
-          <div className="signup-signin-container">
-            <h2 style={{ textAlign: "center" }}>
-              Log In on <span className="blue-text">Fintory.</span>
-            </h2>
-            <form onSubmit={signUpWithEmail}>
-              <div className="input-wrapper">
-                <p>Email</p>
-                <input
-                  type="email"
-                  placeholder="JohnDoe@gmail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              <div className="input-wrapper">
-                <p>Password</p>
-                <input
-                  type="password"
-                  placeholder="Example123"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              <button
-                disabled={loading}
-                className="btn"
-                onClick={signInWithEmail}
-              >
-                {loading ? "Loading..." : " Log In with Email and Password"}
-              </button>
-            </form>
-            <p style={{ textAlign: "center", margin: 0 }}>or</p>
-            <button
-              disabled={loading}
-              className="btn btn-blue"
-              onClick={signInWithGoogle}
-            >
-              {loading ? "Loading..." : " Log In with Google"}
-            </button>
-            <p
-              onClick={() => setFlag(!flag)}
-              style={{
-                textAlign: "center",
-                marginBottom: 0,
-                marginTop: "0.5rem",
-                cursor: "pointer",
-              }}
-            >
-              Or Don't Have An Account? Click Here.
-            </p>
-          </div>
-        ) : (
-          <div className="signup-signin-container">
-            <h2 style={{ textAlign: "center" }}>
-              Sign Up on <span className="blue-text">Fintory.</span>
-            </h2>
-            <form onSubmit={signUpWithEmail}>
+        <div className="signup-signin-container">
+          <h2 style={{ textAlign: "center" }}>
+            {flag ? "Log In on" : "Sign Up on"} <span className="blue-text">Fintory.</span>
+          </h2>
+          <form onSubmit={flag ? signInWithEmail : signUpWithEmail}>
+            {!flag && (
               <div className="input-wrapper">
                 <p>Full Name</p>
                 <input
@@ -178,65 +165,87 @@ const SignUpSignIn = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
+                {errors.name && <p className="error">{errors.name}</p>}
               </div>
-              <div className="input-wrapper">
-                <p>Email</p>
-                <input
-                  type="email"
-                  placeholder="JohnDoe@gmail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+            )}
+            <div className="input-wrapper">
+              <p>Email</p>
+              <input
+                type="email"
+                placeholder="JohnDoe@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              {errors.email && <p className="error">{errors.email}</p>}
+            </div>
 
-              <div className="input-wrapper">
-                <p>Password</p>
-                <input
-                  type="password"
-                  placeholder="Example123"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
+            <div className="input-wrapper" style={{ position: "relative" }}>
+              <p>Password</p>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Example123"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ position: "absolute", right: 10, top: 36, cursor: "pointer" }}
+              >
+                {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
+              </span>
+              {errors.password && <p className="error">{errors.password}</p>}
+            </div>
 
-              <div className="input-wrapper">
+            {!flag && (
+              <div className="input-wrapper" style={{ position: "relative" }}>
                 <p>Confirm Password</p>
                 <input
-                  type="password"
-                  placeholder="Example123"
+                  type={showConfirm ? "text" : "password"}
+                  placeholder="Confirm your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
+                <span
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  style={{ position: "absolute", right: 10, top: 36, cursor: "pointer" }}
+                >
+                  {showConfirm ? <AiFillEyeInvisible /> : <AiFillEye />}
+                </span>
+                {errors.confirmPassword && (
+                  <p className="error">{errors.confirmPassword}</p>
+                )}
               </div>
+            )}
 
-              <button type="submit" className="btn">
-                {loading ? "Loading..." : "Sign Up with Email and Password"}
-              </button>
-            </form>
-            <p style={{ textAlign: "center", margin: 0 }}>or</p>
-            <button
-              disabled={loading}
-              className="btn btn-blue"
-              onClick={signInWithGoogle}
-            >
-              {loading ? "Loading..." : "Sign Up with Google"}
+            <button type="submit" className="btn" disabled={loading}>
+              {loading
+                ? "Loading..."
+                : flag
+                ? "Log In with Email and Password"
+                : "Sign Up with Email and Password"}
             </button>
-            <p
-              onClick={() => setFlag(!flag)}
-              style={{
-                textAlign: "center",
-                marginBottom: 0,
-                marginTop: "0.5rem",
-                cursor: "pointer",
-              }}
-            >
-              Or Have An Account Already? Click Here
-            </p>
-            {/* <button onClick={signInWithEmail}>
-            Sign In with Email and Password
-          </button> */}
-          </div>
-        )}
+          </form>
+          <p style={{ textAlign: "center", margin: 0 }}>or</p>
+          <button disabled={loading} className="btn btn-blue" onClick={signInWithGoogle}>
+            {loading ? "Loading..." : flag ? "Log In with Google" : "Sign Up with Google"}
+          </button>
+          <p
+            onClick={() => {
+              setErrors({});
+              setFlag(!flag);
+            }}
+            style={{
+              textAlign: "center",
+              marginBottom: 0,
+              marginTop: "0.5rem",
+              cursor: "pointer",
+            }}
+          >
+            {flag
+              ? "Or Don't Have An Account? Click Here."
+              : "Or Have An Account Already? Click Here."}
+          </p>
+        </div>
       </div>
     </>
   );

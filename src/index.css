@@ -5,6 +5,12 @@
   --theme: #2970ff;
 }
 
+.error {
+  color: red !important;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
 /* Global reset & typography */
 * {
   margin: 0;
