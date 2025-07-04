@@ -10,7 +10,7 @@ import Cards from "./Cards";
 import NoTransactions from "./NoTransactions";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../utils/firebase";
-import { addDoc, collection, getDocs, query } from "firebase/firestore";
+import { addDoc, deleteDoc, collection, getDocs, query } from "firebase/firestore";
 import Loader from "../components/Loader";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -184,6 +184,38 @@ const Dashboard = () => {
     setLoading(false);
   }
 
+  async function reset() {
+  if (!user) return;
+
+  const confirmReset = window.confirm(
+    "Are you sure you want to reset all your data? This cannot be undone."
+  );
+  if (!confirmReset) return;
+
+  setLoading(true);
+  try {
+    const transactionsRef = collection(db, `users/${user.uid}/transactions`);
+    const querySnapshot = await getDocs(transactionsRef);
+
+    // Delete all documents
+    const deletePromises = querySnapshot.docs.map((doc) => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
+
+    // Clear local state
+    setTransactions([]);
+    setCurrentBalance(0);
+    setIncome(0);
+    setExpenses(0);
+
+    toast.success("All transactions have been reset.");
+  } catch (error) {
+    console.error("Error resetting transactions:", error);
+    toast.error("Failed to reset transactions.");
+  }
+  setLoading(false);
+}
+
+
   const balanceConfig = {
     data: balanceData,
     xField: "month",
@@ -196,9 +228,6 @@ const Dashboard = () => {
     colorField: "category",
   };
 
-  function reset() {
-    console.log("resetting");
-  }
   const cardStyle = {
     boxShadow: "0px 0px 30px 8px rgba(227, 227, 227, 0.75)",
     margin: "2rem",
@@ -253,12 +282,12 @@ const Dashboard = () => {
           ) : (
             <>
               <Row gutter={16}>
-                <Card bordered={true} style={cardStyle}>
+                <Card variant="outlined" style={cardStyle}>
                   <h2>Financial Statistics</h2>
                   <Line {...{ ...balanceConfig, data: balanceData }} />
                 </Card>
 
-                <Card bordered={true} style={{ ...cardStyle, flex: 0.45 }}>
+                <Card variant="outlined" style={{ ...cardStyle, flex: 0.45 }}>
                   <h2>Total Spending</h2>
                   {spendingDataArray.length == 0 ? (
                     <p>Seems like you haven't spent anything till now...</p>

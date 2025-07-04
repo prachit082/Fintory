@@ -21,7 +21,7 @@ function Cards({
       <Card variant="outlined" style={cardStyle}>
         <h2>Current Balance</h2>
         <p>₹{currentBalance}</p>
-        <div class="btn btn-blue" style={{ margin: 0 }} onClick={reset}>
+        <div className="btn btn-blue" style={{ margin: 0 }} onClick={reset}>
           Reset Balance
         </div>
       </Card>
@@ -30,7 +30,7 @@ function Cards({
         <h2>Total Income</h2>
         <p>₹{income}</p>
         <div
-          class="btn btn-blue"
+          className="btn btn-blue"
           style={{ margin: 0 }}
           onClick={showIncomeModal}
         >
