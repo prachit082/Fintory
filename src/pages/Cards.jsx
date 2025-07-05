@@ -1,4 +1,4 @@
-import { Card, Row } from "antd";
+import { Card, Row, Popconfirm } from "antd";
 
 function Cards({
   currentBalance,
@@ -21,9 +21,14 @@ function Cards({
       <Card variant="outlined" style={cardStyle}>
         <h2>Current Balance</h2>
         <p>₹{currentBalance}</p>
-        <div className="btn btn-blue" style={{ margin: 0 }} onClick={reset}>
-          Reset Balance
-        </div>
+        <Popconfirm
+  title="Are you sure you want to reset all your data? This cannot be undone."
+  onConfirm={reset}
+  okText="Yes"
+  cancelText="No"
+>
+  <button className="btn btn-blue">Reset All</button>
+</Popconfirm>
       </Card>
 
       <Card variant="outlined" style={cardStyle}>

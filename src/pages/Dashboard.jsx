@@ -6,11 +6,12 @@ import TransactionSearch from "./TransactionSearch";
 import Header from "../components/Header";
 import AddIncomeModal from "../components/Modals/AddIncome";
 import AddExpenseModal from "../components/Modals/AddExpense";
+import EditTransactionModal from "../components/Modals/EditTransactionModal";
 import Cards from "./Cards";
 import NoTransactions from "./NoTransactions";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../utils/firebase";
-import { addDoc, deleteDoc, collection, getDocs, query } from "firebase/firestore";
+import { addDoc,updateDoc, deleteDoc, collection, getDocs, query, doc } from "firebase/firestore";
 import Loader from "../components/Loader";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -49,7 +50,7 @@ const Dashboard = () => {
   const [currentBalance, setCurrentBalance] = useState(0);
   const [income, setIncome] = useState(0);
   const [expenses, setExpenses] = useState(0);
-
+  const [editingTransaction, setEditingTransaction] = useState(null);
   const navigate = useNavigate();
 
   const processChartData = () => {
@@ -156,7 +157,6 @@ const Dashboard = () => {
         collection(db, `users/${user.uid}/transactions`),
         transaction
       );
-      console.log("Document written with ID: ", docRef.id);
       if (!many) {
         toast.success("Transaction Added!");
       }
@@ -175,8 +175,7 @@ const Dashboard = () => {
       const querySnapshot = await getDocs(q);
       let transactionsArray = [];
       querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        transactionsArray.push(doc.data());
+        transactionsArray.push({ id: doc.id, ...doc.data() });
       });
       setTransactions(transactionsArray);
       toast.success("Transactions Fetched!");
@@ -184,13 +183,31 @@ const Dashboard = () => {
     setLoading(false);
   }
 
+  async function deleteTransaction(id) {
+    try {
+      await deleteDoc(doc(db, `users/${user.uid}/transactions/${id}`));
+      toast.success("Transaction Deleted");
+      fetchTransactions();
+    } catch (e) {
+      console.error("Delete error:", e);
+      toast.error("Could not delete transaction");
+    }
+  }
+
+  async function updateTransaction(id, updatedData) {
+    try {
+      await updateDoc(doc(db, `users/${user.uid}/transactions/${id}`), updatedData);
+      toast.success("Transaction Updated");
+      setEditingTransaction(null);
+      fetchTransactions();
+    } catch (e) {
+      console.error("Update error:", e);
+      toast.error("Could not update transaction");
+    }
+  }
+
   async function reset() {
   if (!user) return;
-
-  const confirmReset = window.confirm(
-    "Are you sure you want to reset all your data? This cannot be undone."
-  );
-  if (!confirmReset) return;
 
   setLoading(true);
   try {
@@ -277,6 +294,15 @@ const Dashboard = () => {
             handleIncomeCancel={handleIncomeCancel}
             onFinish={onFinish}
           />
+
+          {editingTransaction && (
+            <EditTransactionModal
+              editingTransaction={editingTransaction}
+              setEditingTransaction={setEditingTransaction}
+              updateTransaction={updateTransaction}
+            />
+          )}
+
           {transactions.length === 0 ? (
             <NoTransactions />
           ) : (
@@ -303,6 +329,8 @@ const Dashboard = () => {
             exportToCsv={exportToCsv}
             fetchTransactions={fetchTransactions}
             addTransaction={addTransaction}
+            deleteTransaction={deleteTransaction}
+            setEditingTransaction={setEditingTransaction}
           />
         </>
       )}

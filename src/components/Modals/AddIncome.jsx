@@ -15,11 +15,12 @@ function AddIncomeModal({
   const [form] = Form.useForm();
   return (
     <Modal
-      style={{ fontWeight: 600 }}
       title="Add Income"
       open={isIncomeModalVisible}
+      onOk={() => form.submit()}
       onCancel={handleIncomeCancel}
-      footer={null}
+      okText="Add"
+      cancelText="Cancel"
     >
       <Form
         form={form}
@@ -76,9 +77,6 @@ function AddIncomeModal({
           </Select>
         </Form.Item>
         <Form.Item>
-          <Button className="btn btn-blue" type="primary" htmlType="submit">
-            Add Income
-          </Button>
         </Form.Item>
       </Form>
     </Modal>

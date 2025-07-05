@@ -3,6 +3,8 @@ import { Table, Select, Radio } from "antd";
 import search from "../assets/search.svg";
 import { parse } from "papaparse";
 import { toast } from "react-toastify";
+import Popconfirm from "antd/es/popconfirm"
+
 const { Option } = Select;
 
 const TransactionSearch = ({
@@ -10,6 +12,8 @@ const TransactionSearch = ({
   exportToCsv,
   addTransaction,
   fetchTransactions,
+  deleteTransaction,
+  setEditingTransaction,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
@@ -68,6 +72,24 @@ const TransactionSearch = ({
       title: "Tag",
       dataIndex: "tag",
       key: "tag",
+    },
+    {
+      title: "Actions",
+      render: (_, record) => (
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <button className="btn btn-blue" onClick={() => setEditingTransaction(record)}>
+            Edit
+          </button>
+          <Popconfirm
+            title="Delete this transaction?"
+            onConfirm={() => deleteTransaction(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <button className="btn btn-red">Delete</button>
+          </Popconfirm>
+        </div>
+      ),
     },
   ];
 

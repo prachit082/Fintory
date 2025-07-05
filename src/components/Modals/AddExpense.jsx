@@ -16,11 +16,12 @@ function AddExpenseModal({
   const [form] = Form.useForm();
   return (
     <Modal
-      style={{ fontWeight: 600 }}
       title="Add Expense"
       open={isExpenseModalVisible}
+      onOk={() => form.submit()}
       onCancel={handleExpenseCancel}
-      footer={null}
+      okText="Add"
+      cancelText="Cancel"
     >
       <Form
         form={form}
@@ -77,9 +78,6 @@ function AddExpenseModal({
           </Select>
         </Form.Item>
         <Form.Item>
-          <Button className="btn btn-blue" type="primary" htmlType="submit">
-            Add Expense
-          </Button>
         </Form.Item>
       </Form>
     </Modal>
